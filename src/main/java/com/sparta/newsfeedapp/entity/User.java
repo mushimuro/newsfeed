@@ -3,13 +3,10 @@ package com.sparta.newsfeedapp.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 @Table(name= "users")
 public class User {
@@ -18,13 +15,36 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "userId", nullable = false, unique = true)
     private String userId;
+
+    @Column(name = "password", nullable = false)
     private String password;
-    private String username;
+
+    @Column(name = "name", nullable = false, unique = true)
+    private String name;
+
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
-    private String selfIntroduce;
+
+    @Column(name = "bio", length = 20)
+    private String bio;
+
+    @Column(name = "userStatus", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private UserStatusEnum userStatus;
+
+    @Column(name = "refreshToken")
     private String refreshToken;
-    private LocalDateTime statusEditAt;
-    private LocalDateTime createdAt;
-    private LocalDateTime editedAt;
+
+    @Column(name = "statusChangeTime")
+    private Timestamp statusChangeTime;
+
+    public User(String userId, String password, String email, String name, UserStatusEnum userStatus){
+        this.userId = userId;
+        this.password = password;
+        this.email = email;
+        this.name = name;
+        this.userStatus = userStatus;
+    }
 }

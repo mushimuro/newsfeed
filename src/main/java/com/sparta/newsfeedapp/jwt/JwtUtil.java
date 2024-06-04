@@ -14,16 +14,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtUtil {
 
-    // Header KEY 값
     public static final String AUTHORIZATION_HEADER = "Authorization";
-    // 사용자 권한 값의 KEY
-    public static final String AUTHORIZATION_KEY = "auth";
-    // Token 식별자
+//    public static final String AUTHORIZATION_KEY = "auth";
     public static final String BEARER_PREFIX = "Bearer ";
-    // 토큰 만료시간
     private final long TOKEN_TIME = 30 * 60 * 1000L; // 30분
 
-    @Value("${jwt.sercret.key}")
+    @Value("${jwt.secret.key}")
     private String secretKey;
 
     private Key key;
