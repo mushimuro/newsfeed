@@ -2,7 +2,6 @@ package com.sparta.newsfeedapp.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.newsfeedapp.dto.LoginRequestDto;
-import com.sparta.newsfeedapp.entity.UserRoleEnum;
 import com.sparta.newsfeedapp.security.UserDetailsImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -13,10 +12,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 import java.io.IOException;
-
-import static com.sparta.newsfeedapp.entity.UserRoleEnum.USER;
 
 @Slf4j(topic = "로그인 및 JWT 생성")
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -51,15 +47,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         log.info("로그인 성공 및 JWT 생성");
         String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
-//        UserRoleEnum role = USER;
 
         // 토큰 생성
         String token = jwtUtil.createToken(username);
-
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + token);
-//
-        jwtUtil.addJwtToCookie(token, response);
+        // 헤더에 토큰 저장
+        response.setHeader("Authorization", token);
     }
 
     @Override

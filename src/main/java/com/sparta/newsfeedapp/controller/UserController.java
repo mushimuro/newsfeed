@@ -27,18 +27,4 @@ public class UserController {
         userService.signup(requestDto);
         return ResponseEntity.status(HttpStatus.OK).body("회원가입이 완료되었습니다.");
     }
-
-//    @PostMapping("/login")
-//    public ResponseEntity<AuthResponseDto> login(@RequestBody AuthRequestDto authRequestDto){
-//        try{
-//            User user = userService.login(authRequestDto.getUserId(), authRequestDto.getPassword());
-//            String userId = user.getUserId();
-//            String token = jwtUtil.createToken(userId);
-//
-//            AuthResponseDto authResponseDto = new AuthResponseDto("로그인 성공", token);
-//            return new ResponseEntity<>(authResponseDto, HttpStatus.OK);
-//        } catch (Exception e){
-//            return new ResponseEntity<>(new AuthResponseDto("유효하지 않은 사용자 ID 또는 비밀번호", null), HttpStatus.UNAUTHORIZED);
-//        }
-//    }
 }
