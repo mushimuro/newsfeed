@@ -1,15 +1,21 @@
 package com.sparta.newsfeedapp.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sparta.newsfeedapp.dto.LoginRequestDto;
+import com.sparta.newsfeedapp.dto.LoginResponseDto;
 import com.sparta.newsfeedapp.dto.SignupRequestDto;
 import com.sparta.newsfeedapp.entity.User;
 import com.sparta.newsfeedapp.entity.UserStatusEnum;
 import com.sparta.newsfeedapp.jwt.JwtUtil;
 import com.sparta.newsfeedapp.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -59,5 +65,28 @@ public class UserService {
     public User loadUserByUserId(String userId) throws UsernameNotFoundException {
         return userRepository.findByUserId(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("유저를 찾을 수 없습니다: " + userId));
+    }
+
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        final String authHeader = request.getHeader("Authorization");
+        final String refreshToken;
+        final String userId;
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return;
+        }
+        refreshToken = authHeader.substring(7);
+        userId = jwtUtil.getUserInfoFromToken(refreshToken).getId();
+
+//        if(userId != null){
+//            User user = this.userRepository.findByUserId(userId).get();
+//            if(jwtUtil.isTokenValid(refreshToken, userId)){
+//                 //accessToken 새로 발급
+//                String accessToken = jwtUtil.createToken(user.getUserId());
+//                 //refreshToken 새로 발급
+//
+//                LoginResponseDto loginResponseDto = new LoginResponseDto(accessToken, refreshToken);
+//                new ObjectMapper().writeValue(response.getOutputStream(), loginResponseDto);
+//            }
+//        }
     }
 }

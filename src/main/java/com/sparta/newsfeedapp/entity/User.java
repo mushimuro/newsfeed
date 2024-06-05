@@ -47,4 +47,8 @@ public class User {
         this.name = name;
         this.userStatus = userStatus;
     }
+
+    public void setRefreshToken(String refreshToken){
+        this.refreshToken = refreshToken;
+    }
 }

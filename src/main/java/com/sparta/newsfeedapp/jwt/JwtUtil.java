@@ -1,6 +1,8 @@
 package com.sparta.newsfeedapp.jwt;
 
+import com.sparta.newsfeedapp.security.UserDetailsImpl;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,9 +12,11 @@ import org.springframework.beans.factory.annotation.Value;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.security.Key;
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Date;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -26,6 +30,7 @@ public class JwtUtil {
 //    public static final String AUTHORIZATION_KEY = "auth";
     public static final String BEARER_PREFIX = "Bearer ";
     private final long TOKEN_TIME = 30 * 60 * 1000L; // 30분
+    private final long REFRESH_TOKEN_TIME = 14 * 24* 60 * 60 * 1000L; // 2주
 
     @Value("${jwt.secret.key}")
     private String secretKey;
@@ -47,6 +52,18 @@ public class JwtUtil {
                 Jwts.builder()
                         .setSubject(userId)
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME))
+                        .setIssuedAt(date)
+                        .signWith(signatureAlgorithm, key)
+                        .compact();
+    }
+
+    public String createRefreshToken(String userId) {
+        Date date = new Date();
+
+        return BEARER_PREFIX +
+                Jwts.builder()
+                        .setSubject(userId)
+                        .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_TIME))
                         .setIssuedAt(date)
                         .signWith(signatureAlgorithm, key)
                         .compact();
@@ -100,4 +117,34 @@ public class JwtUtil {
         return null;
     }
 
+//    // 토큰 유효성 확인
+//    public boolean isTokenValid(String token, String userId) {
+//        final String tokenUserId = getUserInfoFromToken(token).getId();
+//        return (tokenUserId.equals(userId) && !isTokenExpired(token));
+//    }
+//
+//    private boolean isTokenExpired(String token) {
+//        return (getExpirationDateFromToken(token) < LocalDateTime.now());
+//    }
+//
+//    public static Date getExpirationDateFromToken(String token) {
+//        // 토큰에서 BEARER_PREFIX 제거
+//        if (token.startsWith(BEARER_PREFIX)) {
+//            token = token.substring(BEARER_PREFIX.length());
+//        }
+//
+//        // 토큰 파싱
+////        Jws<Claims> claimsJws = Jwts.parserBuilder()
+////                .setSigningKey(Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKey)))
+////                .build()
+////                .parseClaimsJws(token);
+//
+//        Jws<Claims> claimsJws = Jwts.parserBuilder()
+//                .build()
+//                .parseClaimsJws(token);
+//
+//        // 만료 시간 추출
+//        Claims claims = claimsJws.getBody();
+//        return claims.getExpiration();
+//    }
 }

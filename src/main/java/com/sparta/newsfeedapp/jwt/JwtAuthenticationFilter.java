@@ -2,6 +2,8 @@ package com.sparta.newsfeedapp.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.newsfeedapp.dto.LoginRequestDto;
+import com.sparta.newsfeedapp.entity.User;
+import com.sparta.newsfeedapp.repository.UserRepository;
 import com.sparta.newsfeedapp.security.UserDetailsImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -17,9 +19,11 @@ import java.io.IOException;
 @Slf4j(topic = "로그인 및 JWT 생성")
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil) {
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, UserRepository userRepository) {
         this.jwtUtil = jwtUtil;
+        this.userRepository = userRepository;
         setFilterProcessesUrl("/api/users/login");
     }
 
@@ -46,12 +50,17 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         log.info("로그인 성공 및 JWT 생성");
-        String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
+        String userId = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
 
         // 토큰 생성
-        String token = jwtUtil.createToken(username);
+        String token = jwtUtil.createToken(userId);
+        String refreshToken = jwtUtil.createRefreshToken(userId);
+        // refresh token 유저에 저장
+        User user = userRepository.findByUserId(userId).orElseThrow(NullPointerException::new);
+        user.setRefreshToken(refreshToken);
         // 헤더에 토큰 저장
         response.setHeader("Authorization", token);
+        response.setHeader("RefreshToken", refreshToken);
     }
 
     @Override
