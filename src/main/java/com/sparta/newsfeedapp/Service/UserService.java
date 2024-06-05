@@ -66,13 +66,13 @@ public class UserService {
                 .orElseThrow(() -> new UsernameNotFoundException("유저를 찾을 수 없습니다: " + userId));
     }
 
-    public User login(String userId, String password){
-        User user = userRepository.findByUserId(userId).orElseThrow(IllegalArgumentException::new);
-        if(user == null || !user.getPassword().equals(password)){
-            throw new IllegalArgumentException("사용자 ID 또는 비밀번호가 잘못되었습니다.");
-        }
-        return user;
-    }
+//    public User login(String userId, String password){
+//        User user = userRepository.findByUserId(userId).orElseThrow(IllegalArgumentException::new);
+//        if(user == null || !user.getPassword().equals(password)){
+//            throw new IllegalArgumentException("사용자 ID 또는 비밀번호가 잘못되었습니다.");
+//        }
+//        return user;
+//    }
 
 
 }

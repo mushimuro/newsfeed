@@ -1,10 +1,7 @@
 package com.sparta.newsfeedapp.controller;
 
 import com.sparta.newsfeedapp.Service.UserService;
-import com.sparta.newsfeedapp.dto.AuthRequestDto;
-import com.sparta.newsfeedapp.dto.AuthResponseDto;
 import com.sparta.newsfeedapp.dto.SignupRequestDto;
-import com.sparta.newsfeedapp.entity.User;
 import com.sparta.newsfeedapp.jwt.JwtUtil;
 import com.sparta.newsfeedapp.repository.UserRepository;
 import jakarta.validation.Valid;
@@ -19,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/users")
 @AllArgsConstructor
-public class userController {
+public class UserController {
 
     private final UserRepository userRepository;
     private final UserService userService;
@@ -31,17 +28,17 @@ public class userController {
         return ResponseEntity.status(HttpStatus.OK).body("회원가입이 완료되었습니다.");
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<AuthResponseDto> login(@RequestBody AuthRequestDto authRequestDto){
-        try{
-            User user = userService.login(authRequestDto.getUserId(), authRequestDto.getPassword());
-            String userId = user.getUserId();
-            String token = jwtUtil.createToken(userId);
-
-            AuthResponseDto authResponseDto = new AuthResponseDto("로그인 성공", token);
-            return new ResponseEntity<>(authResponseDto, HttpStatus.OK);
-        } catch (Exception e){
-            return new ResponseEntity<>(new AuthResponseDto("유효하지 않은 사용자 ID 또는 비밀번호", null), HttpStatus.UNAUTHORIZED);
-        }
-    }
+//    @PostMapping("/login")
+//    public ResponseEntity<AuthResponseDto> login(@RequestBody AuthRequestDto authRequestDto){
+//        try{
+//            User user = userService.login(authRequestDto.getUserId(), authRequestDto.getPassword());
+//            String userId = user.getUserId();
+//            String token = jwtUtil.createToken(userId);
+//
+//            AuthResponseDto authResponseDto = new AuthResponseDto("로그인 성공", token);
+//            return new ResponseEntity<>(authResponseDto, HttpStatus.OK);
+//        } catch (Exception e){
+//            return new ResponseEntity<>(new AuthResponseDto("유효하지 않은 사용자 ID 또는 비밀번호", null), HttpStatus.UNAUTHORIZED);
+//        }
+//    }
 }
