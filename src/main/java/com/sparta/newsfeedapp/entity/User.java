@@ -3,7 +3,6 @@ package com.sparta.newsfeedapp.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import java.sql.Timestamp;
 
 @Entity
@@ -46,6 +45,10 @@ public class User extends Timestamped {
         this.email = email;
         this.name = name;
         this.userStatus = userStatus;
+    }
+
+    public void setRefreshToken(String refreshToken){
+        this.refreshToken = refreshToken;
     }
   
     public void deactivateUser(){

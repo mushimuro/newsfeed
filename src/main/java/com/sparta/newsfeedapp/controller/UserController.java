@@ -1,5 +1,6 @@
 package com.sparta.newsfeedapp.controller;
 
+
 import com.sparta.newsfeedapp.dto.userRequestDto.SignupRequestDto;
 import com.sparta.newsfeedapp.dto.userRequestDto.deleteRequestDto;
 import com.sparta.newsfeedapp.service.UserService;
@@ -20,6 +21,13 @@ public class UserController {
     public ResponseEntity<String> signup(@Valid @RequestBody SignupRequestDto requestDto){
         userService.signup(requestDto);
         return ResponseEntity.status(HttpStatus.OK).body("회원가입이 완료되었습니다.");
+    }
+
+
+    // Refresh token
+    @PostMapping("/user/refresh-token")
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        userService.refreshToken(request, response);
     }
 
     @DeleteMapping("/user/delete")
