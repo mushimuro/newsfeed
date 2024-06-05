@@ -1,5 +1,6 @@
-package com.sparta.newsfeedapp.jwt;
+package com.sparta.newsfeedapp.security;
 
+import com.sparta.newsfeedapp.jwt.JwtUtil;
 import com.sparta.newsfeedapp.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;

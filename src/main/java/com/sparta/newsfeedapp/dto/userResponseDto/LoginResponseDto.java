@@ -1,4 +1,4 @@
-package com.sparta.newsfeedapp.dto;
+package com.sparta.newsfeedapp.dto.userResponseDto;
 
 import lombok.Getter;
 

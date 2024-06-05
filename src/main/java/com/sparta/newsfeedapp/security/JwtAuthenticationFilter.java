@@ -1,10 +1,10 @@
-package com.sparta.newsfeedapp.jwt;
+package com.sparta.newsfeedapp.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.newsfeedapp.dto.LoginRequestDto;
+import com.sparta.newsfeedapp.dto.userRequestDto.LoginRequestDto;
 import com.sparta.newsfeedapp.entity.User;
+import com.sparta.newsfeedapp.jwt.JwtUtil;
 import com.sparta.newsfeedapp.repository.UserRepository;
-import com.sparta.newsfeedapp.security.UserDetailsImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import java.io.IOException;
 
 @Slf4j(topic = "로그인 및 JWT 생성")
@@ -24,7 +25,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public JwtAuthenticationFilter(JwtUtil jwtUtil, UserRepository userRepository) {
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
-        setFilterProcessesUrl("/api/users/login");
+        setFilterProcessesUrl("/api/user/login");
     }
 
     @Override
