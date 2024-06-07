@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @Getter
@@ -52,6 +53,7 @@ public class User extends Timestamped {
     public void setRefreshToken(String refreshToken){
         this.refreshToken = refreshToken;
     }
+
     public void deactivateUser(){
         this.userStatus = UserStatusEnum.DELETED;
     }
