@@ -3,7 +3,6 @@ package com.sparta.newsfeedapp.service;
 import com.sparta.newsfeedapp.entity.BlacklistedToken;
 import com.sparta.newsfeedapp.repository.BlacklistedTokenRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

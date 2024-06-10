@@ -1,17 +1,17 @@
 package com.sparta.newsfeedapp.service;
 
+import com.sparta.newsfeedapp.dto.user.ProfileResponseDto;
 import com.sparta.newsfeedapp.dto.user.SignupRequestDto;
 import com.sparta.newsfeedapp.dto.user.deleteRequestDto;
 import com.sparta.newsfeedapp.dto.user.updateRequestDto;
-import com.sparta.newsfeedapp.dto.user.ProfileResponseDto;
 import com.sparta.newsfeedapp.entity.User;
 import com.sparta.newsfeedapp.entity.UserStatusEnum;
 import com.sparta.newsfeedapp.exception.DeletedUserException;
 import com.sparta.newsfeedapp.exception.PasswordMistmatchException;
 import com.sparta.newsfeedapp.exception.TokenNotFoundException;
 import com.sparta.newsfeedapp.exception.UserNotFoundException;
-import com.sparta.newsfeedapp.security.JwtService;
 import com.sparta.newsfeedapp.repository.UserRepository;
+import com.sparta.newsfeedapp.security.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +19,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Optional;
 
 import static com.sparta.newsfeedapp.entity.UserStatusEnum.DELETED;
 
