@@ -11,7 +11,7 @@ public class GlobalExceptionHandler {
     // 기본 오류 발생시
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGeneralException(Exception ex) {
-        return new ResponseEntity<>("An error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(ex +"An error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     // black listed token 입력시 발생

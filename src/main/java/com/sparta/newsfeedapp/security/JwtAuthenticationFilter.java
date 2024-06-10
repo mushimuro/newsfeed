@@ -10,6 +10,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -73,6 +75,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // 헤더에 토큰 저장
         response.setHeader("Authorization", token);
         response.setHeader("RefreshToken", refreshToken);
+        // 로그인 성공 메세지 반환
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(new ObjectMapper().writeValueAsString("로그인 성공!"));
     }
 
     @Override
