@@ -1,5 +1,6 @@
 package com.sparta.newsfeedapp.jwt;
 
+import com.sparta.newsfeedapp.exception.BlackListedTokenException;
 import com.sparta.newsfeedapp.service.JwtBlacklistService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -30,7 +31,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             if (jwtBlacklistService.isTokenBlacklisted(jwtToken)) {
                 log.info("token is blacklisted");
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token is blacklisted");
-                return;
+                throw new BlackListedTokenException();
             }
         }
         chain.doFilter(request, response);

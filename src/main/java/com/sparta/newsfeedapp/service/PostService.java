@@ -5,6 +5,8 @@ import com.sparta.newsfeedapp.dto.postResponseDto.PostResponseDto;
 import com.sparta.newsfeedapp.entity.Comment;
 import com.sparta.newsfeedapp.entity.Post;
 import com.sparta.newsfeedapp.entity.User;
+import com.sparta.newsfeedapp.exception.PostIdNotFoundException;
+import com.sparta.newsfeedapp.exception.UserMismatchException;
 import com.sparta.newsfeedapp.repository.CommentRepository;
 import com.sparta.newsfeedapp.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -53,7 +55,7 @@ public class PostService {
         Post post = findPostById(id);
         if (!post.getUser().getId().equals(user.getId())){
 
-            throw new IllegalArgumentException("본인 게시글만 수정할 수 있습니다.");
+            throw new UserMismatchException();
         }
         post.update(requestDto);
         return new PostResponseDto(post);
@@ -62,7 +64,7 @@ public class PostService {
     public Long deletePost(Long id, User user) {
         Post post = findPostById(id);
         if (!post.getUser().getId().equals(user.getId())){
-            throw new IllegalArgumentException("본인 게시글만 삭제할 수 있습니다.");
+            throw new UserMismatchException();
         }
         postRepository.delete(post);
         return id;
@@ -70,7 +72,7 @@ public class PostService {
 
     private Post findPostById(Long id) {
         return postRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("잘못된 요청입니다.")
+                () -> new PostIdNotFoundException()
         );
     }
 }

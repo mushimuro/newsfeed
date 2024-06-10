@@ -6,6 +6,10 @@ import com.sparta.newsfeedapp.dto.userRequestDto.updateRequestDto;
 import com.sparta.newsfeedapp.dto.userResponseDto.ProfileResponseDto;
 import com.sparta.newsfeedapp.entity.User;
 import com.sparta.newsfeedapp.entity.UserStatusEnum;
+import com.sparta.newsfeedapp.exception.DeletedUserException;
+import com.sparta.newsfeedapp.exception.PasswordMistmatchException;
+import com.sparta.newsfeedapp.exception.TokenNotFoundException;
+import com.sparta.newsfeedapp.exception.UserNotFoundException;
 import com.sparta.newsfeedapp.jwt.JwtUtil;
 import com.sparta.newsfeedapp.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -52,7 +56,7 @@ public class UserService {
     public void deleteUser(deleteRequestDto requestDto, User user) {
         String userPassword = requestDto.getPassword();
         if (!passwordEncoder.matches(userPassword, user.getPassword())){
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new PasswordMistmatchException();
         }
         user.deactivateUser();
         userRepository.save(user);
@@ -73,11 +77,11 @@ public class UserService {
     public void updateProfile(updateRequestDto requestDto, User user) {
         if(user.getUserStatus() == DELETED){
             log.info("삭제된 사용자입니다");
-            throw new IllegalArgumentException("삭제된 사용자입니다.");
+            throw new DeletedUserException();
         }
         User checkUser = loadUserByUserId(user.getUserId());
         if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())){
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new PasswordMistmatchException();
         }
 
         String newPassword = null;
@@ -100,11 +104,11 @@ public class UserService {
 
     public User loadUserByUserId(String userId) throws UsernameNotFoundException {
         return userRepository.findByUserId(userId)
-                .orElseThrow(() -> new UsernameNotFoundException("유저를 찾을 수 없습니다: " + userId));
+                .orElseThrow(() -> new UserNotFoundException());
     }
 
     // logout
-    public void logout(HttpServletRequest request) throws IOException {
+    public void logout(HttpServletRequest request) throws TokenNotFoundException {
         String accessToken = request.getHeader("Authorization").substring(7);
         String refreshToken = request.getHeader("RefreshToken").substring(7);
 
