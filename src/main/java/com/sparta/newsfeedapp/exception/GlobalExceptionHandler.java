@@ -1,17 +1,19 @@
 package com.sparta.newsfeedapp.exception;
 
+import jakarta.validation.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 기본 오류 발생시
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleGeneralException(Exception ex) {
-        return new ResponseEntity<>(ex +"An error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+    // Validation Exception
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<String> handleGeneralException(MethodArgumentNotValidException ex) {
+        return new ResponseEntity<>(ex.getFieldError().getDefaultMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     // black listed token 입력시 발생
