@@ -1,12 +1,12 @@
 package com.sparta.newsfeedapp.service;
 
-import com.sparta.newsfeedapp.dto.userRequestDto.SignupRequestDto;
-import com.sparta.newsfeedapp.dto.userRequestDto.deleteRequestDto;
-import com.sparta.newsfeedapp.dto.userRequestDto.updateRequestDto;
-import com.sparta.newsfeedapp.dto.userResponseDto.ProfileResponseDto;
+import com.sparta.newsfeedapp.dto.user.SignupRequestDto;
+import com.sparta.newsfeedapp.dto.user.deleteRequestDto;
+import com.sparta.newsfeedapp.dto.user.updateRequestDto;
+import com.sparta.newsfeedapp.dto.user.ProfileResponseDto;
 import com.sparta.newsfeedapp.entity.User;
 import com.sparta.newsfeedapp.entity.UserStatusEnum;
-import com.sparta.newsfeedapp.jwt.JwtUtil;
+import com.sparta.newsfeedapp.security.JwtService;
 import com.sparta.newsfeedapp.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
@@ -15,13 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Optional;
 
 import static com.sparta.newsfeedapp.entity.UserStatusEnum.DELETED;
 
@@ -32,7 +30,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
+    private final JwtService jwtService;
     private final JwtBlacklistService jwtBlacklistService;
 
     public void signup(SignupRequestDto requestDto) {
@@ -43,7 +41,7 @@ public class UserService {
         String bio = requestDto.getBio();
 
         // 사용자 등록
-        User user = new User(userId, password, email, name, bio, UserStatusEnum.ACTIVE);
+        User user = new User(userId, password, email, name, bio, UserStatusEnum.UNCHECKED);
         userRepository.save(user);
         log.info("회원가입 완료");
     }
@@ -54,7 +52,7 @@ public class UserService {
         if (!passwordEncoder.matches(userPassword, user.getPassword())){
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
-        user.deactivateUser();
+        user.setStatusToDeleted();
         userRepository.save(user);
     }
 
@@ -108,13 +106,13 @@ public class UserService {
         String accessToken = request.getHeader("Authorization").substring(7);
         String refreshToken = request.getHeader("RefreshToken").substring(7);
 
-        User user = loadUserByUserId(jwtUtil.extractUserId(accessToken));
+        User user = loadUserByUserId(jwtService.extractUserId(accessToken));
         user.setRefreshToken("logged out");
 
 
-        LocalDateTime accessExpiration = jwtUtil.extractExpiration(accessToken).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        LocalDateTime accessExpiration = jwtService.extractExpiration(accessToken).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         jwtBlacklistService.blacklistToken(accessToken, accessExpiration);
-        LocalDateTime refreshExpiration = jwtUtil.extractExpiration(refreshToken).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        LocalDateTime refreshExpiration = jwtService.extractExpiration(refreshToken).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         jwtBlacklistService.blacklistToken(refreshToken, refreshExpiration);
 
         SecurityContextHolder.clearContext();

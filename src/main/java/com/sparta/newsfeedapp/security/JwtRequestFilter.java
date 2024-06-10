@@ -1,4 +1,4 @@
-package com.sparta.newsfeedapp.jwt;
+package com.sparta.newsfeedapp.security;
 
 import com.sparta.newsfeedapp.service.JwtBlacklistService;
 import jakarta.servlet.FilterChain;
@@ -18,7 +18,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     // 요청 들어올때마다 토큰이 블랙리스트에 있는지 확인한다
 
     private JwtBlacklistService jwtBlacklistService;
-    private JwtUtil jwtUtil;
+    private JwtService jwtService;
 
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
@@ -26,7 +26,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if(requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             String jwtToken = requestTokenHeader.substring(7);
-            log.info("jwtToken : " + jwtToken);
+            log.info("jwtToken : {}", jwtToken);
             if (jwtBlacklistService.isTokenBlacklisted(jwtToken)) {
                 log.info("token is blacklisted");
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token is blacklisted");
