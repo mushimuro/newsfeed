@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class MailController {
     private final MailService mailService;
 
-    @PostMapping("/mailSend")
+    @PostMapping("/emails/send")
     public String mailSend(@RequestBody @Valid EmailRequestDto emailDto) {
         System.out.println("이메일 인증 이메일 :" + emailDto.getEmail());
         return mailService.joinEmail(emailDto.getEmail());
     }
 
-    @PostMapping("/mailAuthCheck")
+    @PostMapping("/emails/auth/check")
     public ResponseEntity<String> AuthCheck(@RequestBody @Valid EmailCheckRequestDto emailCheckDto){
         mailService.CheckAuthNum(emailCheckDto.getEmail(),emailCheckDto.getAuthNum());
         return ResponseEntity.status(HttpStatus.OK).body("인증이 완료되었습니다.");
