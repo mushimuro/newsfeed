@@ -6,6 +6,9 @@ import com.sparta.newsfeedapp.dto.comment.CommentResponseDto;
 import com.sparta.newsfeedapp.entity.Comment;
 import com.sparta.newsfeedapp.entity.Post;
 import com.sparta.newsfeedapp.entity.User;
+import com.sparta.newsfeedapp.exception.CommentIdNotFoundException;
+import com.sparta.newsfeedapp.exception.PostIdNotFoundException;
+import com.sparta.newsfeedapp.exception.UserMismatchException;
 import com.sparta.newsfeedapp.repository.CommentRepository;
 import com.sparta.newsfeedapp.repository.PostRepository;
 import jakarta.transaction.Transactional;
@@ -30,7 +33,7 @@ public class CommentService {
 
     public CommentResponseDto createComment(CommentCreateRequestDto requestDto, Long postId, User user){
         // RequestDto > Entity
-        Post checkPost = postRepository.findById(postId).orElseThrow(NullPointerException::new);
+        Post checkPost = postRepository.findById(postId).orElseThrow(PostIdNotFoundException::new);
         Comment comment = new Comment(requestDto, user, checkPost);
         commentRepository.save(comment);
         return new CommentResponseDto(comment);
@@ -40,9 +43,9 @@ public class CommentService {
     public ResponseEntity<String> updateComment(CommentUpdateRequestDto requestDto, Long commentId, User user) {
 
         if (commentRepository.existsById(commentId)) {
-            Comment comment = commentRepository.findById(commentId).orElseThrow(NullPointerException::new);
+            Comment comment = commentRepository.findById(commentId).orElseThrow(CommentIdNotFoundException::new);
             if (!comment.getUser().getId().equals(user.getId())){
-                throw new IllegalArgumentException("본인 댓글만 수정할 수 있습니다.");
+                throw new UserMismatchException();
             }
             comment.update(requestDto);
             return new ResponseEntity<>("성공적으로 수정했습니다. (" + comment.getContent() + ")", HttpStatus.OK);
@@ -54,9 +57,9 @@ public class CommentService {
     public ResponseEntity<String> deleteComment(Long commentId, User user){
 
         if (commentRepository.existsById(commentId)) {
-            Comment comment = commentRepository.findById(commentId).orElseThrow(NullPointerException::new);
+            Comment comment = commentRepository.findById(commentId).orElseThrow(CommentIdNotFoundException::new);
             if (!comment.getUser().getId().equals(user.getId())){
-                throw new IllegalArgumentException("본인 댓글만 삭제할 수 있습니다.");
+                throw new UserMismatchException();
             }
             commentRepository.deleteById(commentId);
             return new ResponseEntity<>("성공적으로 삭제했습니다.", HttpStatus.OK);
