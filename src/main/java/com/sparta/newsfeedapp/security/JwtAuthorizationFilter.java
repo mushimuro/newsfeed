@@ -36,7 +36,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(tokenValue)) {
             // JWT 토큰 substring
             tokenValue = jwtService.substringToken(tokenValue);
-            log.info(tokenValue);
+//            log.info(tokenValue);
 
             if (!jwtService.validateToken(tokenValue)) {
                 log.error("Token Error");
@@ -53,6 +53,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             }
         }
 
+        log.info("Authorization Success");
         filterChain.doFilter(req, res);
     }
 
